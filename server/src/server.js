@@ -4,7 +4,7 @@ import cors from "cors";
 import studentsRoutes from "./students/index.js";
 
 const server = express();
-const port = 3001;
+const port = process.env.PORT || 3002 || 3003;
 
 server.use(cors());
 server.use(express.json());
