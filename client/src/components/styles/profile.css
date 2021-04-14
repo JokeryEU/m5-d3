@@ -1,0 +1,109 @@
+.pButton {
+  margin-right: 12px;
+}
+.card {
+  transition: 0.25s ease;
+}
+.card:hover {
+  box-shadow: 0px 0px 15px -2px rgb(160, 160, 160);
+}
+.openToButton {
+  padding: 5px;
+  transition: 0.25s ease;
+  border-radius: 5px;
+  border: none;
+  color: white;
+  background-color: #0a66c2;
+  letter-spacing: 1px;
+}
+.openToButton:hover {
+  background-color: #004182;
+}
+.greyButton {
+  color: rgb(73, 73, 73);
+  padding: 5px;
+  border: 1px solid rgb(56, 56, 56);
+  transition: 0.25s ease;
+  border-radius: 5px;
+  background-color: white;
+}
+.greyButton:hover {
+  color: rgb(3, 3, 3);
+  box-shadow: inset 0px 0px 2px 1px rgb(14, 14, 14);
+  background-color: rgb(228, 228, 228);
+}
+.students {
+  /* position: relative; */
+  padding: 10px;
+  transition: 0.25s ease;
+  background-color: white;
+  margin-top: 20px;
+  min-height: 40vh;
+  border-radius: 4px;
+  align-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+}
+/* .students > .row > .col-12 > img {
+  position: absolute;
+  cursor: pointer;
+  right: 15px;
+  top: 10px;
+} */
+.alignToTheRight {
+  display: flex;
+  justify-content: flex-end;
+}
+.Skills {
+  transition: 0.25s ease;
+  background-color: white;
+  margin-top: 20px;
+  min-height: 40vh;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+}
+.students:hover {
+  box-shadow: 0px 0px 15px -2px rgb(160, 160, 160);
+}
+.Skills:hover {
+  box-shadow: 0px 0px 15px -2px rgb(160, 160, 160);
+}
+.date {
+  display: flex;
+  flex-direction: row;
+}
+
+.proPic > img {
+  border-radius: 50%;
+  transition: 0.25s ease;
+}
+
+.proPic:hover > img {
+  box-shadow: 0px 0px 20px -6px;
+}
+.experienceContainer {
+  align-items: center;
+  padding: 10px;
+  justify-content: space-between;
+  border-radius: 20px;
+  background-color: rgba(27, 126, 207, 0.205);
+}
+.experienceContainer > p {
+  margin: 0;
+}
+.experienceContainer > .text-muted > p {
+  margin: 0;
+}
+
+.editButton {
+  border: none;
+  border-radius: 50%;
+  background-color: rgb(141, 182, 228);
+}
+.delButton {
+  border: none;
+  border-radius: 50%;
+  background-color: rgb(230, 127, 127);
+}
