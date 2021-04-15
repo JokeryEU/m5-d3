@@ -14,7 +14,7 @@ import { getStudents, writeStudents } from "../library/fs-tools.js";
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
   try {
     const students = await getStudents();
 
@@ -24,7 +24,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res, next) => {
   console.log("UNIQUE id: ", req.params.id);
   try {
     const students = await getStudents();
@@ -36,7 +36,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", async (req, res, next) => {
   try {
     const students = await getStudents();
     console.log(students);
@@ -62,7 +62,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", async (req, res, next) => {
   try {
     const students = await getStudents();
 
@@ -86,7 +86,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req, res, next) => {
   try {
     const students = await getStudents();
 
