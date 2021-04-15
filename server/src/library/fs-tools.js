@@ -12,11 +12,13 @@ const studentsFiles = join(
 
 export const getStudents = async () =>
   await readJSON(join(wholeData, "students.json"));
+
 export const getProjects = async () =>
   await readJSON(join(wholeData, "projects.json"));
 
 export const writeStudents = async (content) =>
   await writeJSON(join(wholeData, "students.json"), content);
+
 export const writeProjects = async (content) =>
   await writeJSON(join(wholeData, "projects.json"), content);
 
