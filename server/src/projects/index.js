@@ -1,23 +1,15 @@
 import express from "express";
-import fs from "fs";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import fs from "fs-extra";
 import uniqid from "uniqid";
 import { check, validationResult } from "express-validator";
 
+import { getProjects, writeProjects } from "../library/fs-tools.js";
+
 const router = express.Router();
 
-const filename = fileURLToPath(import.meta.url);
-const dirName = dirname(filename);
-
-const getProjects = () => {
-  const fileAsABuffer = fs.readFileSync(join(dirName, "projects.json"));
-  return JSON.parse(fileAsABuffer.toString());
-};
-
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const projects = getProjects();
+    const projects = await getProjects();
 
     res.send(projects);
   } catch (error) {
@@ -25,10 +17,10 @@ router.get("/", (req, res) => {
   }
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id", async (req, res) => {
   console.log("UNIQUE id: ", req.params.id);
   try {
-    const projects = getProjects();
+    const projects = await getProjects();
 
     const project = projects.find((project) => project.id === req.params.id);
     res.send(project);
@@ -37,9 +29,9 @@ router.get("/:id", (req, res) => {
   }
 });
 
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   try {
-    const projects = getProjects();
+    const projects = await getProjects();
 
     const newProject = { ...req.body, id: uniqid(), createdAt: new Date() };
 
@@ -68,9 +60,9 @@ router.post("/", (req, res) => {
   }
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
-    const projects = getProjects();
+    const projects = await getProjects();
 
     const newProject = projects.filter(
       (project) => project.id !== req.params.id
@@ -95,9 +87,9 @@ router.put("/:id", (req, res) => {
   }
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
-    const projects = getProjects();
+    const projects = await getProjects();
 
     const newProjectArray = projects.filter(
       (project) => project.id !== req.params.id

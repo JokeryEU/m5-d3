@@ -7,27 +7,16 @@
 */
 
 import express from "express";
-import fs from "fs";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
 import uniqid from "uniqid";
 import { check, validationResult } from "express-validator";
 
+import { getStudents, writeStudents } from "../library/fs-tools.js";
+
 const router = express.Router();
 
-const filename = fileURLToPath(import.meta.url);
-const dirName = dirname(filename);
-
-const getStudents = () => {
-  const fileAsABuffer = fs.readFileSync(join(dirName, "students.json"));
-  return JSON.parse(fileAsABuffer.toString());
-};
-
-const studentsJSONPath = join(dirname(filename), "students.json");
-
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const students = getStudents();
+    const students = await getStudents();
 
     res.send(students);
   } catch (error) {
@@ -35,10 +24,10 @@ router.get("/", (req, res) => {
   }
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id", async (req, res) => {
   console.log("UNIQUE id: ", req.params.id);
   try {
-    const students = getStudents();
+    const students = await getStudents();
 
     const student = students.find((student) => student.id === req.params.id);
     res.send(student);
@@ -47,40 +36,35 @@ router.get("/:id", (req, res) => {
   }
 });
 
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   try {
-    const students = getStudents();
-
+    const students = await getStudents();
+    console.log(students);
     const newStudent = { ...req.body, id: uniqid(), createdAt: new Date() };
 
-    const existingEmailFilter = students.filter(
-      (student) =>
-        student.email.toLowerCase() === newStudent.email.toLowerCase()
-    );
+    // const existingEmailFilter = students.filter(
+    //   (student) =>
+    //     student.email.toLowerCase() === newStudent.email.toLowerCase()
+    // );
 
-    if (existingEmailFilter.length === 0) {
-      newStudent.id = uniqid();
+    // if (existingEmailFilter.length === 0) {
+    students.push(newStudent);
 
-      students.push(newStudent);
+    await writeStudents(newStudent);
 
-      fs.writeFileSync(
-        join(dirName, "students.json"),
-        JSON.stringify(students)
-      );
-
-      res.status(201).send({ id: newStudent.id });
-    } else {
-      console.log("Duplicated email address");
-      res.status(409).send("This email address is already in use");
-    }
+    res.status(201).send({ id: newStudent.id });
+    // } else {
+    //   console.log("Duplicated email address");
+    //   res.status(409).send("This email address is already in use");
+    // }
   } catch (error) {
     console.log(error);
   }
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
-    const students = getStudents();
+    const students = await getStudents();
 
     const newStudentsArray = students.filter(
       (student) => student.id !== req.params.id
@@ -94,10 +78,7 @@ router.put("/:id", (req, res) => {
 
     newStudentsArray.push(modifiedStudent);
 
-    fs.writeFileSync(
-      join(dirName, "students.json"),
-      JSON.stringify(newStudentsArray)
-    );
+    await writeStudents(newStudentsArray);
 
     res.send({ data: "HELLO FROM PUT ROUTE!" });
   } catch (error) {
@@ -105,18 +86,15 @@ router.put("/:id", (req, res) => {
   }
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
-    const students = getStudents();
+    const students = await getStudents();
 
     const newStudentsArray = students.filter(
       (student) => student.id !== req.params.id
     );
 
-    fs.writeFileSync(
-      join(dirName, "students.json"),
-      JSON.stringify(newStudentsArray)
-    );
+    await writeStudents(newStudentsArray);
 
     res.status(204).send();
   } catch (error) {
