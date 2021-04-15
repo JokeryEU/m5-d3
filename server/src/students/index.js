@@ -11,97 +11,114 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import uniqid from "uniqid";
+import { check, validationResult } from "express-validator";
 
 const router = express.Router();
 
 const filename = fileURLToPath(import.meta.url);
+const dirName = dirname(filename);
+
+const getStudents = () => {
+  const fileAsABuffer = fs.readFileSync(join(dirName, "students.json"));
+  return JSON.parse(fileAsABuffer.toString());
+};
 
 const studentsJSONPath = join(dirname(filename), "students.json");
 
 router.get("/", (req, res) => {
-  console.log("GET ROUTE");
-  const fileAsABuffer = fs.readFileSync(studentsJSONPath);
+  try {
+    const students = getStudents();
 
-  const fileAsAString = fileAsABuffer.toString();
-
-  const fileAsAJSON = JSON.parse(fileAsAString);
-  res.send(fileAsAJSON);
+    res.send(students);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 router.get("/:id", (req, res) => {
   console.log("UNIQUE id: ", req.params.id);
-  const fileAsABuffer = fs.readFileSync(studentsJSONPath);
+  try {
+    const students = getStudents();
 
-  const fileAsAString = fileAsABuffer.toString();
-
-  const students = JSON.parse(fileAsAString);
-
-  const student = students.find((s) => s.id === req.params.id);
-  res.send(student);
+    const student = students.find((s) => s.id === req.params.id);
+    res.send(student);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 router.post("/", (req, res) => {
-  const fileAsABuffer = fs.readFileSync(studentsJSONPath);
+  try {
+    const students = getStudents();
 
-  const fileAsAString = fileAsABuffer.toString();
+    const newStudent = req.body;
 
-  const students = JSON.parse(fileAsAString);
+    const existingEmailFilter = students.filter(
+      (student) =>
+        student.email.toLowerCase() === newStudent.email.toLowerCase()
+    );
 
-  const newStudent = req.body;
+    if (existingEmailFilter.length === 0) {
+      newStudent.id = uniqid();
 
-  const existingEmailFilter = students.filter(
-    (student) => student.email.toLowerCase() === newStudent.email.toLowerCase()
-  );
+      students.push(newStudent);
 
-  if (existingEmailFilter.length === 0) {
-    newStudent.id = uniqid();
+      fs.writeFileSync(
+        join(dirName, "students.json"),
+        JSON.stringify(students)
+      );
 
-    students.push(newStudent);
-
-    fs.writeFileSync(studentsJSONPath, JSON.stringify(students));
-
-    res.status(201).send({ id: newStudent.id });
-  } else {
-    console.log("Duplicated email address");
-    res.status(409).send("This email address is already in use");
+      res.status(201).send({ id: newStudent.id });
+    } else {
+      console.log("Duplicated email address");
+      res.status(409).send("This email address is already in use");
+    }
+  } catch (error) {
+    console.log(error);
   }
 });
 
 router.put("/:id", (req, res) => {
-  const fileAsABuffer = fs.readFileSync(studentsJSONPath);
+  try {
+    const students = getStudents();
 
-  const fileAsAString = fileAsABuffer.toString();
+    const newStudentsArray = students.filter(
+      (student) => student.id !== req.params.id
+    );
 
-  const students = JSON.parse(fileAsAString);
+    const modifiedUser = req.body;
+    modifiedUser.id = req.params.id;
 
-  const newStudentsArray = students.filter(
-    (student) => student.id !== req.params.id
-  );
+    newStudentsArray.push(modifiedUser);
 
-  const modifiedUser = req.body;
-  modifiedUser.id = req.params.id;
+    fs.writeFileSync(
+      join(dirName, "students.json"),
+      JSON.stringify(newStudentsArray)
+    );
 
-  newStudentsArray.push(modifiedUser);
-
-  fs.writeFileSync(studentsJSONPath, JSON.stringify(newStudentsArray));
-
-  res.send({ data: "HELLO FROM PUT ROUTE!" });
+    res.send({ data: "HELLO FROM PUT ROUTE!" });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 router.delete("/:id", (req, res) => {
-  const fileAsABuffer = fs.readFileSync(studentsJSONPath);
+  try {
+    const students = getStudents();
 
-  const fileAsAString = fileAsABuffer.toString();
+    const newStudentsArray = students.filter(
+      (student) => student.id !== req.params.id
+    );
 
-  const students = JSON.parse(fileAsAString);
+    fs.writeFileSync(
+      join(dirName, "students.json"),
+      JSON.stringify(newStudentsArray)
+    );
 
-  const newStudentsArray = students.filter(
-    (student) => student.id !== req.params.id
-  );
-
-  fs.writeFileSync(studentsJSONPath, JSON.stringify(newStudentsArray));
-
-  res.status(204).send();
+    res.status(204).send();
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 export default router;
