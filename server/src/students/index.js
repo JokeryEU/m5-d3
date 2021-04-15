@@ -28,7 +28,7 @@ router.get("/:id", async (req, res, next) => {
   console.log("UNIQUE id: ", req.params.id);
   try {
     const students = await getStudents();
-
+    console.log(students);
     const student = students.find((student) => student.id === req.params.id);
     res.send(student);
   } catch (error) {
@@ -42,21 +42,21 @@ router.post("/", async (req, res, next) => {
     console.log(students);
     const newStudent = { ...req.body, id: uniqid(), createdAt: new Date() };
 
-    // const existingEmailFilter = students.filter(
-    //   (student) =>
-    //     student.email.toLowerCase() === newStudent.email.toLowerCase()
-    // );
+    const existingEmailFilter = students.filter(
+      (student) =>
+        student.email.toLowerCase() === newStudent.email.toLowerCase()
+    );
 
-    // if (existingEmailFilter.length === 0) {
-    students.push(newStudent);
+    if (existingEmailFilter.length === 0) {
+      students.push(newStudent);
 
-    await writeStudents(newStudent);
+      await writeStudents(students);
 
-    res.status(201).send({ id: newStudent.id });
-    // } else {
-    //   console.log("Duplicated email address");
-    //   res.status(409).send("This email address is already in use");
-    // }
+      res.status(201).send({ id: newStudent.id });
+    } else {
+      console.log("Duplicated email address");
+      res.status(409).send("This email address is already in use");
+    }
   } catch (error) {
     console.log(error);
   }
