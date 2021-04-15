@@ -40,7 +40,7 @@ router.get("/:id", (req, res) => {
   try {
     const students = getStudents();
 
-    const student = students.find((s) => s.id === req.params.id);
+    const student = students.find((student) => student.id === req.params.id);
     res.send(student);
   } catch (error) {
     console.log(error);
@@ -51,7 +51,7 @@ router.post("/", (req, res) => {
   try {
     const students = getStudents();
 
-    const newStudent = req.body;
+    const newStudent = { ...req.body, id: uniqid(), createdAt: new Date() };
 
     const existingEmailFilter = students.filter(
       (student) =>
@@ -86,10 +86,13 @@ router.put("/:id", (req, res) => {
       (student) => student.id !== req.params.id
     );
 
-    const modifiedUser = req.body;
-    modifiedUser.id = req.params.id;
+    const modifiedStudent = {
+      ...req.body,
+      id: req.params.id,
+      modifiedAt: new Date(),
+    };
 
-    newStudentsArray.push(modifiedUser);
+    newStudentsArray.push(modifiedStudent);
 
     fs.writeFileSync(
       join(dirName, "students.json"),

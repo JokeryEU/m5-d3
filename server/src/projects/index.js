@@ -30,7 +30,7 @@ router.get("/:id", (req, res) => {
   try {
     const projects = getProjects();
 
-    const project = projects.find((s) => s.id === req.params.id);
+    const project = projects.find((project) => project.id === req.params.id);
     res.send(project);
   } catch (error) {
     console.log(error);
