@@ -41,7 +41,7 @@ router.post("/", (req, res) => {
   try {
     const projects = getProjects();
 
-    const newProject = req.body;
+    const newProject = { ...req.body, id: uniqid(), createdAt: new Date() };
 
     const existingEmailFilter = projects.filter(
       (project) =>
@@ -72,18 +72,21 @@ router.put("/:id", (req, res) => {
   try {
     const projects = getProjects();
 
-    const newProjectArray = projects.filter(
+    const newProject = projects.filter(
       (project) => project.id !== req.params.id
     );
 
-    const modifiedUser = req.body;
-    modifiedUser.id = req.params.id;
+    const modifiedProject = {
+      ...req.body,
+      id: req.params.id,
+      modifiedAt: new Date(),
+    };
 
-    newProjectArray.push(modifiedUser);
+    newProject.push(modifiedProject);
 
     fs.writeFileSync(
       join(dirName, "projects.json"),
-      JSON.stringify(newProjectArray)
+      JSON.stringify(newProject)
     );
 
     res.send({ data: "HELLO FROM PUT ROUTE!" });
